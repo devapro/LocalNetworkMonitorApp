@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <service android:name=".services.ScanForegroundService" />
+        <receiver android:name=".AlarReceiver"/>
     </application>
 
 </manifest>

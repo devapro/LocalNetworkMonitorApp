@@ -12,10 +12,14 @@ import android.os.IBinder;
 import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import java.util.Date;
+
 import pro.devapp.networkwatcher.App;
 import pro.devapp.networkwatcher.MainActivity;
 import pro.devapp.networkwatcher.R;
 import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
+import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 
 public class ScanForegroundService extends Service {
 
@@ -62,7 +66,7 @@ public class ScanForegroundService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(App.CHANNEL_ID);
+            builder.setChannelId(App.SERVICE_NOTIFICATION_CHANNEL_ID);
         }
         return builder
             .setContentTitle(getString(R.string.app_name))
@@ -107,6 +111,35 @@ public class ScanForegroundService extends Service {
         public void onEnd(boolean success) {
             stopForeground(true);
             stopSelf();
+        }
+
+        @Override
+        public void onNewDeviceDetected(DeviceEntity device) {
+            Intent notificationIntent = new Intent(getApplicationContext(), MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder.setChannelId(App.NOTIFICATION_CHANNEL_ID);
+            }
+            Notification notification = builder
+                .setContentTitle(device.getIp())
+                .setSubText(device.getIp())
+                .setContentText(device.getName())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .setOnlyAlertOnce(true)
+                .setAutoCancel(false)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_REMINDER)
+                .setSound(null)
+                .build();
+
+            NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(new Date().getSeconds(), notification);
         }
     };
 }

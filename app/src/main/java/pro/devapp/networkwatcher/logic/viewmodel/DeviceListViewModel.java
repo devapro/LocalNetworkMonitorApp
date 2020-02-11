@@ -9,6 +9,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import pro.devapp.networkwatcher.App;
 import pro.devapp.networkwatcher.logic.NetworkController;
 import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
+import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.logic.viewmodel.livedata.DevicesLiveData;
 import pro.devapp.networkwatcher.storage.AppDataBase;
 
@@ -87,6 +88,11 @@ public class DeviceListViewModel extends BaseViewModel {
         public void onEnd(boolean success) {
             isLoading.setValue(false);
             isRefreshing.setValue(false);
+        }
+
+        @Override
+        public void onNewDeviceDetected(DeviceEntity device) {
+
         }
     };
 

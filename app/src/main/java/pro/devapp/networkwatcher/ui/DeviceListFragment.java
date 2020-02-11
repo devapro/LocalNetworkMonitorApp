@@ -22,6 +22,7 @@ import pro.devapp.networkwatcher.App;
 import pro.devapp.networkwatcher.R;
 import pro.devapp.networkwatcher.databinding.FragmentDeviceListBinding;
 import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
+import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.logic.viewmodel.DeviceListViewModel;
 import pro.devapp.networkwatcher.services.ScanForegroundService;
 
@@ -84,6 +85,11 @@ public class DeviceListFragment extends Fragment {
         public void onEnd(boolean success) {
             snackbar.dismiss();
             snackbar = null;
+        }
+
+        @Override
+        public void onNewDeviceDetected(DeviceEntity device) {
+
         }
     };
 }

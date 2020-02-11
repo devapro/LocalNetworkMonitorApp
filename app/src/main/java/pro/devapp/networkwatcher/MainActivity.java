@@ -6,17 +6,15 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.app.AlarmManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import pro.devapp.networkwatcher.databinding.ActivityMainBinding;
 import pro.devapp.networkwatcher.logic.MainNavigationController;
-import pro.devapp.networkwatcher.logic.NetworkController;
 import pro.devapp.networkwatcher.logic.viewmodel.MainViewModel;
+import pro.devapp.networkwatcher.utils.AlarmUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,13 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(mainBinding.toolbar);
 
-
-        //TODO test
-//        Executors.newCachedThreadPool().execute(() -> {
-//            NetworkController.getLocalIpAddress();
-//            String ip = NetworkController.getMyIp(this);
-//            NetworkController.scan(ip);
-//        });
+        AlarmManager manager = (AlarmManager)getSystemService(
+            Context.ALARM_SERVICE);
+        AlarmUtil.setScheduledAlarm(manager, this);
     }
 
     @Override

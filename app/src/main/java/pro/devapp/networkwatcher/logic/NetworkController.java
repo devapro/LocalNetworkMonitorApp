@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.storage.AppDataBase;
 import pro.devapp.networkwatcher.storage.entity.NetworkDeviceEntity;
 import pro.devapp.networkwatcher.storage.entity.NetworkDeviceHistoryEntity;
@@ -184,6 +185,15 @@ public class NetworkController {
         if(deviceEntity != null){
             NetworkDeviceHistoryEntity lastState = dataBase.networkDeviceHistoryDao().getLastState(deviceEntity.getId());
             if(lastState == null || lastState.getStateType() != NetworkDeviceHistoryEntity.State.ONLINE){
+                progressScanDispatcher.dispatchNewDeviceFound(new DeviceEntity(
+                    deviceEntity.getId(),
+                    deviceEntity.getName(),
+                    deviceEntity.getIp(),
+                    deviceEntity.getMac(),
+                    deviceEntity.getCreatedAt(),
+                    deviceEntity.getUpdatedAt(),
+                    NetworkDeviceHistoryEntity.State.ONLINE
+                ));
                 dataBase.networkDeviceHistoryDao().add(new NetworkDeviceHistoryEntity(
                     0,
                     deviceEntity.getId(),

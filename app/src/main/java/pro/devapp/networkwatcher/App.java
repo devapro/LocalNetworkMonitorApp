@@ -10,7 +10,8 @@ import pro.devapp.networkwatcher.storage.AppDataBase;
 
 public class App extends Application {
 
-    public static final String CHANNEL_ID = "ScannerNotification";
+    public static final String SERVICE_NOTIFICATION_CHANNEL_ID = "ScannerNotification";
+    public static final String NOTIFICATION_CHANNEL_ID = "NewDeviceNotification";
     private AppDataBase appDataBase;
     private NetworkController networkController;
 
@@ -32,13 +33,21 @@ public class App extends Application {
 
     private void createNotificationChanel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(
-                CHANNEL_ID,
-                "Timer",
+            NotificationChannel foregroundNotificationChannel = new NotificationChannel(
+                SERVICE_NOTIFICATION_CHANNEL_ID,
+                "Foreground scan service",
                 NotificationManager.IMPORTANCE_DEFAULT
             );
-            notificationChannel.setSound(null, null);
-            notificationChannel.setShowBadge(false);
+            foregroundNotificationChannel.setSound(null, null);
+            foregroundNotificationChannel.setShowBadge(false);
+            getSystemService(NotificationManager.class).createNotificationChannel(foregroundNotificationChannel);
+
+            NotificationChannel notificationChannel = new NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                "New device detected",
+                NotificationManager.IMPORTANCE_HIGH
+            );
+            notificationChannel.setShowBadge(true);
             getSystemService(NotificationManager.class).createNotificationChannel(notificationChannel);
         }
     }
