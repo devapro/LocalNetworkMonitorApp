@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#006AC4</color>
+    <color name="colorPrimaryDark">#006AC4</color>
+    <color name="colorAppBg">#FFFFFF</color>
+    <color name="colorLink">#006AC4</color>
+    <color name="colorLinkNight">#DAAE56</color>
+    <color name="colorAccent">#7EC7FF</color>
+    <color name="colorGrey">#EDEAEA</color>
+    <color name="colorGreyText">#ADACAC</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorWhiteGray">#B3FFFFFF</color>
+    <color name="colorTextBlack">#000</color>
+</resources>

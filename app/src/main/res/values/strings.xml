@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NetworkWatcher</string>
+    <string name="stop_scan">Stop</string>
+</resources>
