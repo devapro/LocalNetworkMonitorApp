@@ -25,12 +25,6 @@ public class ScanForegroundService extends Service {
 
     private final int NOTIFICATION_ID = 234;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        ((App)getApplication()).getNetworkController().getProgressScanDispatcher().addListener(callback);
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,14 +34,15 @@ public class ScanForegroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startForeground(NOTIFICATION_ID, createNotification(0));
-        ((App)getApplication()).getNetworkController().scan();
+        ((App)getApplication()).getNetworkScanController().getProgressScanDispatcher().addListener(callback);
+        ((App)getApplication()).getNetworkScanController().scan();
         return START_STICKY;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((App)getApplication()).getNetworkController().getProgressScanDispatcher().removeListener(callback);
+        ((App)getApplication()).getNetworkScanController().getProgressScanDispatcher().removeListener(callback);
     }
 
     private Notification createNotification(int progress) {
@@ -128,14 +123,10 @@ public class ScanForegroundService extends Service {
                 .setContentText(device.getName())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent)
-                .setOngoing(true)
-                .setOnlyAlertOnce(true)
-                .setAutoCancel(false)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_REMINDER)
-                .setSound(null)
+                .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .build();
 
             NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);

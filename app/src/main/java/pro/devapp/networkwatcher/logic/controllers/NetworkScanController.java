@@ -1,4 +1,4 @@
-package pro.devapp.networkwatcher.logic;
+package pro.devapp.networkwatcher.logic.controllers;
 
 import android.content.Context;
 import android.net.wifi.WifiManager;
@@ -27,27 +27,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
 import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.storage.AppDataBase;
 import pro.devapp.networkwatcher.storage.entity.NetworkDeviceEntity;
 import pro.devapp.networkwatcher.storage.entity.NetworkDeviceHistoryEntity;
-
 import static android.content.Context.WIFI_SERVICE;
 
-/**
- * Private IP addresses start with 10, 172, or 192 which are Class A, B, and C respectively. The subnet masks are 255.0.0.0, 255.255.0.0, and 255.255.255.0 respectively, /8, /16, and /24 in CIDR notation.
- */
 
-/**
- * WifiManager wifiMan = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
- * WifiInfo wifiInf = wifiMan.getConnectionInfo();
- * int ipAddress = wifiInf.getIpAddress();
- * String ip = String.format("%d.%d.%d.%d", (ipAddress & 0xff),(ipAddress >> 8 & 0xff),(ipAddress >> 16 & 0xff),(ipAddress >> 24 & 0xff));
- */
-
-// https://stackoverflow.com/questions/6064510/how-to-get-ip-address-of-the-device-from-code
-    //https://www.android-examples.com/get-display-ip-address-of-android-phone-device-programmatically/
-public class NetworkController {
+public class NetworkScanController {
 
     private final Context context;
     private final AppDataBase dataBase;
@@ -60,7 +48,7 @@ public class NetworkController {
     private final AtomicBoolean inProgress = new AtomicBoolean(false);
     private final AtomicBoolean forceStop = new AtomicBoolean(false);
 
-    public NetworkController(Context context, AppDataBase dataBase) {
+    public NetworkScanController(Context context, AppDataBase dataBase) {
         this.context = context;
         this.dataBase = dataBase;
         uiThreadExecutor = ContextCompat.getMainExecutor(context);
@@ -75,7 +63,7 @@ public class NetworkController {
         if(inProgress.compareAndSet(false, true)){
             progressScanDispatcher.dispatchStart();
             workThreadExecutor.execute(() -> {
-                final boolean success = scanP();
+                final boolean success = findNetworkDevices();
                 uiThreadExecutor.execute(() -> {
                     progressScanDispatcher.dispatchEnd(success);
                 });
@@ -87,7 +75,7 @@ public class NetworkController {
         forceStop.compareAndSet(false, true);
     }
 
-    private boolean scanP(){
+    private boolean findNetworkDevices(){
         int maxIp = 255;
         String ip = getMyWiFiIp();
         try {
@@ -97,26 +85,19 @@ public class NetworkController {
             for (int i = 0; i <= maxIp; i++) {
 
                 if (forceStop.compareAndSet(true, false)){
+                    inProgress.set(false);
                     return true;
                 }
 
-                final int progress = (i/(maxIp/100));
-                uiThreadExecutor.execute(() -> {
-                    progressScanDispatcher.dispatchProgress(progress);
-                });
+                final int progress = (int)(i/(maxIp/100F));
+                uiThreadExecutor.execute(() -> progressScanDispatcher.dispatchProgress(progress));
 
                 // build the next IP address
                 ip = ip.substring(0, ip.lastIndexOf('.') + 1) + i;
                 InetAddress pingAddr = InetAddress.getByName(ip);
 
                 if (pingAddr.isReachable(1000)) {
-                    Log.d("PING", pingAddr.getHostAddress());
-//                    Log.d("PING", pingAddr.getHostName());
-//                    Log.d("PING", pingAddr.getCanonicalHostName());
-                    Log.d("PING", pingAddr.getCanonicalHostName());
-
                     String mac = getMacAddress(pingAddr.getHostAddress());
-                    Log.d("PING", "- " + mac);
                     String info = "";
                     if(mac != null){
                         info = getInfo(mac);
@@ -140,6 +121,8 @@ public class NetworkController {
             }
         } catch (Exception ex) {
             return false;
+        } finally {
+            inProgress.set(false);
         }
         return true;
     }

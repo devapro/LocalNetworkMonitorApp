@@ -2,6 +2,7 @@ package pro.devapp.networkwatcher.logic.viewmodel.livedata;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pro.devapp.networkwatcher.logic.entity.BaseLiveData;
@@ -30,6 +31,7 @@ public class DevicesLiveData extends BaseLiveData<List<DeviceEntity>> {
     public List<DeviceEntity> getData() {
         List<DeviceEntity> result = new ArrayList<>();
         List<NetworkDeviceEntity> items = appDataBase.networkDeviceDao().devices();
+
         for (NetworkDeviceEntity item : items){
             NetworkDeviceHistoryEntity lastState = appDataBase.networkDeviceHistoryDao().getLastState(item.getId());
             result.add(new DeviceEntity(
@@ -42,6 +44,8 @@ public class DevicesLiveData extends BaseLiveData<List<DeviceEntity>> {
                 lastState != null ? lastState.getStateType() : NetworkDeviceHistoryEntity.State.OFFLINE
             ));
         }
+
+        Collections.sort(result);
         return result;
     }
 }

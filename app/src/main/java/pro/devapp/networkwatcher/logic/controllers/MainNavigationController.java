@@ -1,4 +1,4 @@
-package pro.devapp.networkwatcher.logic;
+package pro.devapp.networkwatcher.logic.controllers;
 
 import android.app.Activity;
 import android.os.Bundle;

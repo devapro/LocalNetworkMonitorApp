@@ -6,15 +6,12 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import android.app.AlarmManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import pro.devapp.networkwatcher.databinding.ActivityMainBinding;
-import pro.devapp.networkwatcher.logic.MainNavigationController;
+import pro.devapp.networkwatcher.logic.controllers.MainNavigationController;
 import pro.devapp.networkwatcher.logic.viewmodel.MainViewModel;
-import pro.devapp.networkwatcher.utils.AlarmUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
         mainNavigationController = new MainNavigationController(this, controller);
 
         setSupportActionBar(mainBinding.toolbar);
-
-        AlarmManager manager = (AlarmManager)getSystemService(
-            Context.ALARM_SERVICE);
-        AlarmUtil.setScheduledAlarm(manager, this);
     }
 
     @Override
@@ -45,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         controller.addOnDestinationChangedListener(mainNavigationController.getNavigationListener());
 
-        new Handler().postDelayed(() -> { mainBinding.splash.setVisibility(View.GONE); }, 1000);
+        new Handler().postDelayed(() -> mainBinding.splash.setVisibility(View.GONE), 1000);
     }
 
     @Override

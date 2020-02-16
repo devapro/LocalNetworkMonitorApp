@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import pro.devapp.networkwatcher.App;
-import pro.devapp.networkwatcher.logic.NetworkController;
+import pro.devapp.networkwatcher.logic.controllers.NetworkScanController;
 import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
 import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.logic.viewmodel.livedata.DevicesLiveData;
@@ -16,7 +16,7 @@ import pro.devapp.networkwatcher.storage.AppDataBase;
 public class DeviceListViewModel extends BaseViewModel {
 
     private final AppDataBase dataBase;
-    private final NetworkController networkController;
+    private final NetworkScanController networkScanController;
     private final DevicesLiveData devicesLiveData;
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>(false);
@@ -26,9 +26,9 @@ public class DeviceListViewModel extends BaseViewModel {
         super(application);
         this.listener = listener;
         dataBase = ((App)application).getAppDataBase();
-        networkController = ((App)application).getNetworkController();
+        networkScanController = ((App)application).getNetworkScanController();
         devicesLiveData = new DevicesLiveData(dataBase);
-        networkController.getProgressScanDispatcher().addListener(callback);
+        networkScanController.getProgressScanDispatcher().addListener(callback);
     }
 
     public static ViewModelProvider.Factory  createFactory(@NonNull Application application, @NonNull ActionListener listener) {
@@ -55,7 +55,7 @@ public class DeviceListViewModel extends BaseViewModel {
     protected void onCleared() {
         super.onCleared();
         devicesLiveData.shutdown();
-        networkController.getProgressScanDispatcher().removeListener(callback);
+        networkScanController.getProgressScanDispatcher().removeListener(callback);
     }
 
     private final SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener(){

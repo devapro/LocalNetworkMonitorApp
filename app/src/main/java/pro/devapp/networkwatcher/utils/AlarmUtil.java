@@ -8,9 +8,11 @@ import java.util.Calendar;
 import pro.devapp.networkwatcher.AlarReceiver;
 
 public class AlarmUtil {
+    public final static int REQUEST_CODE = 109;
+
     public static void setScheduledAlarm(AlarmManager manager, Context context){
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 101, new Intent(context, AlarReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, REQUEST_CODE, new Intent(context, AlarReceiver.class), PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 10);

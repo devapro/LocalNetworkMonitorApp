@@ -59,20 +59,20 @@ public class DeviceListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        ((App)getActivity().getApplication()).getNetworkController().getProgressScanDispatcher().addListener(callback);
+        ((App)getActivity().getApplication()).getNetworkScanController().getProgressScanDispatcher().addListener(callback);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        ((App)getActivity().getApplication()).getNetworkController().getProgressScanDispatcher().removeListener(callback);
+        ((App)getActivity().getApplication()).getNetworkScanController().getProgressScanDispatcher().removeListener(callback);
     }
 
     private final ProgressScanDispatcher.ProgressCallback callback = new ProgressScanDispatcher.ProgressCallback() {
         @Override
         public void onStart() {
             snackbar = Snackbar.make(mBinding.container, "", BaseTransientBottomBar.LENGTH_INDEFINITE)
-                .setAction(R.string.stop_scan, v -> ((App)getActivity().getApplication()).getNetworkController().stopScan());
+                .setAction(R.string.stop_scan, v -> ((App)getActivity().getApplication()).getNetworkScanController().stopScan());
             snackbar.show();
         }
 

@@ -4,7 +4,7 @@ import androidx.core.util.ObjectsCompat;
 
 import pro.devapp.networkwatcher.storage.entity.NetworkDeviceHistoryEntity;
 
-public class DeviceEntity {
+public class DeviceEntity implements Comparable<DeviceEntity>{
     private final long id;
     private final String name;
     private final String ip;
@@ -72,5 +72,19 @@ public class DeviceEntity {
 
     public boolean isConnected(){
         return lastState == NetworkDeviceHistoryEntity.State.ONLINE;
+    }
+
+    @Override
+    public int compareTo(DeviceEntity entity) {
+        if(entity.lastState == this.lastState){
+            return this.updatedAt < entity.updatedAt ? -1 : 1;
+        }
+        else if(entity.lastState == NetworkDeviceHistoryEntity.State.ONLINE && this.lastState == NetworkDeviceHistoryEntity.State.OFFLINE){
+            return 1;
+        }
+        else if(entity.lastState == NetworkDeviceHistoryEntity.State.OFFLINE && this.lastState == NetworkDeviceHistoryEntity.State.ONLINE){
+            return -1;
+        }
+        return 0;
     }
 }
