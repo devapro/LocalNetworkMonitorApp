@@ -4,8 +4,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -24,6 +26,13 @@ import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 public class ScanForegroundService extends Service {
 
     private final int NOTIFICATION_ID = 234;
+    private final String ACTION_STOP = ScanForegroundService.class.getName() + "stop";
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        registerReceiver(stopReceiver, new IntentFilter(ACTION_STOP));
+    }
 
     @Nullable
     @Override
@@ -42,6 +51,7 @@ public class ScanForegroundService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterReceiver(stopReceiver);
         ((App)getApplication()).getNetworkScanController().getProgressScanDispatcher().removeListener(callback);
     }
 
@@ -49,9 +59,8 @@ public class ScanForegroundService extends Service {
         Intent notificationIntent = new Intent(this, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //TODO
         Intent stopIntent = new Intent();
-        stopIntent.setAction(ScanForegroundService.class.getName() + "stop");
+        stopIntent.setAction(ACTION_STOP);
         PendingIntent pendingIntentStop = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         RemoteViews customRemoteViews = new RemoteViews(getPackageName(), R.layout.notification_scanner);
@@ -131,6 +140,13 @@ public class ScanForegroundService extends Service {
 
             NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(new Date().getSeconds(), notification);
+        }
+    };
+
+    private final BroadcastReceiver stopReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            ((App)getApplication()).getNetworkScanController().stopScan();
         }
     };
 }
