@@ -44,6 +44,14 @@ public class DeviceListView extends RecyclerView {
         ((CustomAdapter)getAdapter()).submitList(items);
     }
 
+    @Nullable
+    public DeviceEntity getItem(int position){
+        if(position == NO_POSITION){
+            return null;
+        }
+        return ((CustomAdapter)getAdapter()).getItem(position);
+    }
+
     private static class CustomAdapter extends ListAdapter<DeviceEntity, CustomViewHolder>{
 
         CustomAdapter() {
@@ -75,6 +83,10 @@ public class DeviceListView extends RecyclerView {
         @Override
         public void onViewRecycled(@NonNull CustomViewHolder holder) {
             holder.unind();
+        }
+
+        public DeviceEntity getItem(int position){
+            return super.getItem(position);
         }
     }
 

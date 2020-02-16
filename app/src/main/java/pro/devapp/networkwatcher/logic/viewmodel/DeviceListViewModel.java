@@ -1,10 +1,15 @@
 package pro.devapp.networkwatcher.logic.viewmodel;
 
 import android.app.Application;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import pro.devapp.networkwatcher.App;
 import pro.devapp.networkwatcher.logic.controllers.NetworkScanController;
@@ -12,6 +17,7 @@ import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
 import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
 import pro.devapp.networkwatcher.logic.viewmodel.livedata.DevicesLiveData;
 import pro.devapp.networkwatcher.storage.AppDataBase;
+import pro.devapp.networkwatcher.ui.customviews.DeviceListView;
 
 public class DeviceListViewModel extends BaseViewModel {
 
@@ -21,6 +27,7 @@ public class DeviceListViewModel extends BaseViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isRefreshing = new MutableLiveData<>(false);
     private final ActionListener listener;
+    private final GestureDetector mGestureDetector;
 
     public DeviceListViewModel(@NonNull Application application, @NonNull ActionListener listener) {
         super(application);
@@ -29,6 +36,7 @@ public class DeviceListViewModel extends BaseViewModel {
         networkScanController = ((App)application).getNetworkScanController();
         devicesLiveData = new DevicesLiveData(dataBase);
         networkScanController.getProgressScanDispatcher().addListener(callback);
+        mGestureDetector = new GestureDetector(application.getApplicationContext(), gestureListener);
     }
 
     public static ViewModelProvider.Factory  createFactory(@NonNull Application application, @NonNull ActionListener listener) {
@@ -49,6 +57,10 @@ public class DeviceListViewModel extends BaseViewModel {
 
     public SwipeRefreshLayout.OnRefreshListener getRefreshListener() {
         return refreshListener;
+    }
+
+    public RecyclerView.SimpleOnItemTouchListener getTouchListener() {
+        return touchListener;
     }
 
     @Override
@@ -96,6 +108,32 @@ public class DeviceListViewModel extends BaseViewModel {
         }
     };
 
+    private final GestureDetector.SimpleOnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+
+        }
+    };
+
+    private final RecyclerView.SimpleOnItemTouchListener touchListener = new RecyclerView.SimpleOnItemTouchListener(){
+        @Override public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent e) {
+            View childView = view.findChildViewUnder(e.getX(), e.getY());
+            if (childView != null && mGestureDetector.onTouchEvent(e)) {
+                DeviceEntity entity = ((DeviceListView)view).getItem(view.getChildAdapterPosition(childView));
+                if(entity != null){
+                    listener.openDeviceDetails(entity);
+                }
+                return true;
+            }
+            return false;
+        }
+    };
+
     static class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
 
         private final Application application;
@@ -116,5 +154,6 @@ public class DeviceListViewModel extends BaseViewModel {
 
     public interface ActionListener{
         void startScan();
+        void openDeviceDetails(DeviceEntity device);
     }
 }

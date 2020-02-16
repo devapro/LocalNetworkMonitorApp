@@ -8,6 +8,8 @@ import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
 
+import pro.devapp.networkwatcher.logic.entity.DeviceEntity;
+
 public class MainNavigationController {
 
     private final Activity activity;
@@ -27,5 +29,13 @@ public class MainNavigationController {
 
     public NavController.OnDestinationChangedListener getNavigationListener() {
         return navigationListener;
+    }
+
+    public void openDeviceDetails(DeviceEntity device){
+
+    }
+
+    public void openSettings(){
+
     }
 }

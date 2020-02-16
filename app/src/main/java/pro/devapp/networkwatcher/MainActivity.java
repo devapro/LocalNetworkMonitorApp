@@ -46,4 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         controller.removeOnDestinationChangedListener(mainNavigationController.getNavigationListener());
     }
+
+    public MainNavigationController getMainNavigationController() {
+        return mainNavigationController;
+    }
 }

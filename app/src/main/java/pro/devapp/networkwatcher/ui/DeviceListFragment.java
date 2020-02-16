@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 
 import pro.devapp.networkwatcher.App;
+import pro.devapp.networkwatcher.MainActivity;
 import pro.devapp.networkwatcher.R;
 import pro.devapp.networkwatcher.databinding.FragmentDeviceListBinding;
 import pro.devapp.networkwatcher.logic.ProgressScanDispatcher;
@@ -51,6 +52,13 @@ public class DeviceListFragment extends Fragment {
             @Override
             public void startScan() {
                 ContextCompat.startForegroundService(getContext(), new Intent(getContext(), ScanForegroundService.class));
+            }
+
+            @Override
+            public void openDeviceDetails(DeviceEntity device) {
+                if(getActivity() != null){
+                    ((MainActivity)getActivity()).getMainNavigationController().openDeviceDetails(device);
+                }
             }
         })).get(DeviceListViewModel.class);
         mBinding.setModel(mViewModel);

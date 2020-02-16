@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.LiveData;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.List;
@@ -49,9 +50,13 @@ public class AppBindingAdapter {
         }
     }
 
-
     @BindingAdapter("imageResource")
     public static void setImageViewDrawableResourse(ImageView view, @DrawableRes int idRes){
         view.setImageDrawable(ContextCompat.getDrawable(view.getContext(), idRes));
+    }
+
+    @BindingAdapter("touchListener")
+    public static void setRecyclerViewTouchListener(RecyclerView view, RecyclerView.SimpleOnItemTouchListener touchListener){
+        view.addOnItemTouchListener(touchListener);
     }
 }

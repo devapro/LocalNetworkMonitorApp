@@ -21,6 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:items="@{model.devicesLiveData}"
+                app:touchListener="@{model.touchListener}"
                 />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         <androidx.core.widget.ContentLoadingProgressBar
